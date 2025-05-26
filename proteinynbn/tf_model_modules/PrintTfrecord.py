@@ -16,21 +16,21 @@ def print_tfrecord(tfrecord_path, features_description, batch_size, buffer_size=
 		return tf.io.parse_example(input_example, features=features_description)
 	
 	if isinstance(tfrecord_path, list):
-		files_path = tfrecord_path
+		files_path: list = tfrecord_path
 	elif isinstance(tfrecord_path, str):
-		files_path = [tfrecord_path]
+		files_path: str = [tfrecord_path]
 	else:
 		raise TypeError('tfrecord_path must be either a string or a list')
 	
-	dataset = tf.data.TFRecordDataset(files_path)
-	data_set = dataset.map(_parse_example)
-	dataset = (
+	dataset: tf.data.TFRecordDataset = tf.data.TFRecordDataset(files_path)
+	data_set: tf.data.Dataset = dataset.map(_parse_example)
+	dataset: tf.data.Dataset = (
 		data_set.shuffle(buffer_size, reshuffle_each_iteration=True)
 		.batch(batch_size)
 		.prefetch(tf.data.AUTOTUNE)
 	)
 	print(f'dataset size: {dataset}')
-	all_features = features_description.keys()
+	all_features: list = features_description.keys()
 	for batch in data_set.take(1):
 		for feature in all_features:
 			tf.print(f'{feature}: {batch[feature]}')
