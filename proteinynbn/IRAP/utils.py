@@ -1,12 +1,15 @@
-
+import os
+from typing import Union
 
 class IrapSeq:
 	def __init__(self) -> None:
+		self.module_dir: str = os.path.dirname(os.path.abspath(__file__))
+		self.irap_path: str = os.path.join(self.module_dir, 'irap.txt')
 		self.irap_dict: dict = self.__readirap__()
 	
 	def __readirap__(self) -> dict[str, str]:
 		irap: dict[str, str] = dict()
-		with open('./irap.txt', 'r') as file:
+		with open(self.irap_path, 'r') as file:
 			for line in file:
 				line = line.strip().split(' ')
 				the_type: str = line[1]
@@ -23,9 +26,11 @@ class IrapSeq:
 	def irap_dicts(self) -> dict[str, str]:
 		return self.irap_dict
 		
-	def irap(self, seq:str, type: str='0', size:str='20') -> str:
-		name: str = f'type:{type}+size:{size}'
-		assert name in self.irap_dict.keys(), f"this type and size are not in irap_dict, {self.irap_dict.keys()=}"
+	def irap(self, seq:str, type_and_size: Union[bool, str] = None) -> str:
+		if type_and_size:
+			name: str = type_and_size
+		else:
+			name: str = f'type:0+size:1'
 		irap_context: list = self.irap_dict[name].split("-")
 		return self.__seqtoirap__(seq.upper(), irap_context)
 		
@@ -44,4 +49,7 @@ if __name__ == '__main__':
     fasta_file: str = './cd_hit_ready.fasta'
     # main(fasta_file, irap_str)
     a = IrapSeq()
-    print(a.irap(seq='eeewe', type='1', size='2'))
+    types = a.irap_dicts()
+    for k, v in types.items():
+	    
+        print(a.irap(seq='eeewe', type_and_size=k))

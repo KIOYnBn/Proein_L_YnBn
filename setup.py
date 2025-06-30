@@ -15,10 +15,10 @@ from setuptools import find_packages, setup, Command
 NAME = 'proteinynbn'
 DESCRIPTION = 'My short description for my project.'
 URL = 'https://github.com/me/myproject'
-EMAIL = 'me@example.com'
-AUTHOR = 'Awesome Soul'
+EMAIL = 'twb72743075@126.com'
+AUTHOR = 'Liu Jingyuan'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.1.0'
+VERSION = '0.3.5'
 
 # What packages are required for this module to be executed?
 REQUIRED = [
@@ -113,6 +113,9 @@ setup(
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
+    package_data={
+        'your_package': ['*.txt'],  # 可选，明确指定包含的txt文件
+    },
     license='MIT',
     classifiers=[
         # Trove classifiers

@@ -63,7 +63,13 @@ def train_or_eval(features_num, eval_per, input_file, train_path, eval_path):
 					writer_train.write(line)
 			
 			
-def slice_fragment(input_file, output_dir, focus=None):
+def slice_fragment(
+		input_file, 
+		output_dir, 
+		focus=None, 
+		file_type: str = 'txt',
+		csv_split: str = '\t'
+):
 	"""
 	Description:
 	A method orignated from ELECTRA thesis.
@@ -81,9 +87,13 @@ def slice_fragment(input_file, output_dir, focus=None):
 	with open(input_file, 'r') as input_file:
 		for line in input_file:
 			if line.startswith('>'):
-				name = line.strip().split("\t")[0]
-				seq = next(input_file).strip()
-				site = next(input_file).strip()
+				if file_type == 'txt':
+					name = line.strip().split("\t")[0]
+					seq = next(input_file).strip()
+					site = next(input_file).strip()
+					
+				elif file_type == 'csv':
+					name, seq, site = line.strip().split(csv_split)
 				for position in range(len(seq)):
 					if seq[position] in focus:
 						if max(0, position - 12) >= 0 and max(len(seq), position + 13) <= len(seq):
