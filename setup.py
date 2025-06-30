@@ -18,7 +18,7 @@ URL = 'https://github.com/me/myproject'
 EMAIL = 'twb72743075@126.com'
 AUTHOR = 'Liu Jingyuan'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.3.5'
+VERSION = '0.3.8'
 
 # What packages are required for this module to be executed?
 REQUIRED = [

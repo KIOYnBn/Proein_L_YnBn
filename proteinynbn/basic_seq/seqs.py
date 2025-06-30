@@ -1,9 +1,9 @@
-def read_fasta(file_path):
+def read_fasta(file_path: str) -> dict:
 	"""
 	Description:
 	This function reads a fasta file
 	and returns a list of features included in the fasta file.
-	:param file_path:str # path to fasta file
+	:param file_path: str # path to fasta file
 	:return:  protein_dict:dict # dictionary of protein features. Such as 'sequence', 'sites'
 	"""
 	protein_dict = dict()
@@ -20,7 +20,12 @@ def read_fasta(file_path):
 	return protein_dict
 
 
-def train_or_eval(features_num, eval_per, input_file, train_path, eval_path):
+def train_or_eval(features_num: int, 
+                  eval_per: float, 
+                  input_file: str, 
+                  train_path: str, 
+                  eval_path: str
+                  ) -> None:
 	"""
 	Description:
 	divide the total protein_datas into train and eval sets
@@ -33,25 +38,25 @@ def train_or_eval(features_num, eval_per, input_file, train_path, eval_path):
 	"""
 	import random
 	
-	def integrate_lines(all_lines, start, end):
-		temp_line = ''
-		print(f'start {start}, end {end}')
-		for index in range(start, end+1):
-			temp_line += all_lines[index]
-		print(f'temp_line:{temp_line}')
+	def integrate_lines(start):
+		temp_num: int = features_num
+		temp_line: str = ''
+		while temp_num > 0:
+			temp_line += lines[start]
+			start += 1
+			temp_num -= 1
 		return temp_line
 		
 	with open(input_file, 'r') as writer:
 		lines = writer.readlines()
-		length = len(lines) // (features_num+1)
-		numbers = [(features_num+1)*x for x in range(length)]
-		print(numbers)
+		length = len(lines) // (features_num)
+		numbers = [(features_num)*x for x in range(length)]
 		eval_length = int(len(numbers) * eval_per)
 		selected = random.sample(numbers, eval_length)
 		with open(eval_path, 'w') as writer_eval:
 			for line_index in selected:
 				line_index = line_index
-				line = integrate_lines(lines, line_index, line_index+features_num)
+				line = integrate_lines(line_index)
 				writer_eval.write(line)
 		with open(train_path, 'w') as writer_train:
 			for line_index in numbers:
@@ -59,7 +64,7 @@ def train_or_eval(features_num, eval_per, input_file, train_path, eval_path):
 					continue
 				else:
 					line_index = line_index
-					line = integrate_lines(lines, line_index, line_index+features_num)
+					line = integrate_lines(line_index)
 					writer_train.write(line)
 			
 			
@@ -69,7 +74,7 @@ def slice_fragment(
 		focus=None, 
 		file_type: str = 'txt',
 		csv_split: str = '\t'
-):
+) -> None:
 	"""
 	Description:
 	A method orignated from ELECTRA thesis.
@@ -102,9 +107,9 @@ def slice_fragment(
 								fragment_line = seq[position - 12:position + 13]
 								if len(fragment_line) == 25:
 									if site[position] != "0":
-										positive_fragment += name + "\n" + fragment_line + "\n" + label + "\n"
+										positive_fragment += name + "\t" + fragment_line + "\t" + label + "\n"
 									else:
-										negative_fragment += name + "\n" + fragment_line + "\n" + label + '\n'
+										negative_fragment += name + "\t" + fragment_line + "\t" + label + '\n'
 	with open(f'{output_dir}/positive_fragment', 'w') as positive_file:
 		positive_file.write(positive_fragment)
 	with open(f'{output_dir}/negative_fragment', 'w') as negative_file:
@@ -116,5 +121,5 @@ if __name__ == '__main__':
 	if operation == 'read':
 		read_fasta('negative_fragment')
 	if operation == 'train':
-		train_or_eval(features_num=2, eval_per=0.1, input_file='./negative_fragment', train_path='./train.txt', eval_path='./test.txt')
+		train_or_eval(features_num=3, eval_per=0.1, input_file='./negative_fragment', train_path='./train.txt', eval_path='./test.txt')
 	
